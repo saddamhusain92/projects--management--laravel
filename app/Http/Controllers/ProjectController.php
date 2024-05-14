@@ -121,10 +121,13 @@ class ProjectController extends Controller
         $image = $data['image'] ?? null;
         $data['updated_by'] = Auth::id();
         if ($image) {
-            if ($project->image_path) {
-                Storage::disk('public')->deleteDirectory(dirname($project->image_path));
-            }
-            $data['image_path'] = $image->store('project/' . Str::random(), 'public');
+            $nameImage = time();
+            $image = $request->file('image');
+        // Generate a unique file name for the image
+          $nameImage = $nameImage. '.'. $image->extension();
+          $data['image_path'] = 'images/'.$nameImage;
+          $image->move(public_path('storage/images'),  $nameImage);
+    
         }
         $project->update($data);
 
